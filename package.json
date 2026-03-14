@@ -1,0 +1,17 @@
+{
+  "name": "pokemon-damage-calculator",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=apps/web",
+    "build": "npm run build --workspace=packages/core && npm run build --workspace=packages/data && npm run build --workspace=apps/web",
+    "test": "npm run test --workspace=packages/core",
+    "lint": "npm run lint --workspace=apps/web"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
