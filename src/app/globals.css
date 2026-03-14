@@ -1,0 +1,100 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-primary: #f8fafc;
+  --bg-card: #ffffff;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --border: #e2e8f0;
+  --accent: #3b82f6;
+  --accent-hover: #2563eb;
+  --danger: #ef4444;
+  --success: #22c55e;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans',
+    'Noto Sans JP', sans-serif;
+}
+
+@layer components {
+  .card {
+    @apply bg-white rounded-xl shadow-sm border border-slate-200 p-4;
+  }
+
+  .input-field {
+    @apply w-full px-3 py-2 border border-slate-300 rounded-lg text-sm
+    focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+    bg-white;
+  }
+
+  .select-field {
+    @apply w-full px-3 py-2 border border-slate-300 rounded-lg text-sm
+    focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+    bg-white appearance-none cursor-pointer;
+  }
+
+  .btn-primary {
+    @apply px-4 py-2 bg-blue-500 text-white rounded-lg text-sm font-medium
+    hover:bg-blue-600 active:bg-blue-700 transition-colors;
+  }
+
+  .btn-secondary {
+    @apply px-4 py-2 bg-slate-100 text-slate-700 rounded-lg text-sm font-medium
+    hover:bg-slate-200 active:bg-slate-300 transition-colors;
+  }
+
+  .label {
+    @apply block text-xs font-medium text-slate-500 mb-1;
+  }
+
+  .stat-input {
+    @apply w-16 px-2 py-1 border border-slate-300 rounded text-sm text-center
+    focus:outline-none focus:ring-2 focus:ring-blue-500;
+  }
+}
+
+/* タイプカラー */
+.type-ノーマル { @apply bg-gray-400 text-white; }
+.type-ほのお { @apply bg-orange-500 text-white; }
+.type-みず { @apply bg-blue-500 text-white; }
+.type-でんき { @apply bg-yellow-400 text-black; }
+.type-くさ { @apply bg-green-500 text-white; }
+.type-こおり { @apply bg-cyan-300 text-black; }
+.type-かくとう { @apply bg-red-700 text-white; }
+.type-どく { @apply bg-purple-500 text-white; }
+.type-じめん { @apply bg-amber-600 text-white; }
+.type-ひこう { @apply bg-indigo-300 text-black; }
+.type-エスパー { @apply bg-pink-500 text-white; }
+.type-むし { @apply bg-lime-500 text-white; }
+.type-いわ { @apply bg-yellow-700 text-white; }
+.type-ゴースト { @apply bg-purple-700 text-white; }
+.type-ドラゴン { @apply bg-violet-600 text-white; }
+.type-あく { @apply bg-gray-700 text-white; }
+.type-はがね { @apply bg-slate-400 text-white; }
+.type-フェアリー { @apply bg-pink-300 text-black; }
+
+.type-badge {
+  @apply px-2 py-0.5 rounded text-xs font-bold inline-block;
+}
+
+/* HP Bar */
+.hp-bar-container {
+  @apply w-full h-4 bg-slate-200 rounded-full overflow-hidden;
+}
+
+.hp-bar {
+  @apply h-full rounded-full transition-all duration-300;
+}
+
+.hp-bar.hp-high { @apply bg-green-500; }
+.hp-bar.hp-mid { @apply bg-yellow-500; }
+.hp-bar.hp-low { @apply bg-red-500; }
