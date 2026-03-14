@@ -1,0 +1,27 @@
+import { Nature } from '@/core/types';
+
+export const NATURES: Nature[] = [
+  { id: 'ijippari', name: 'いじっぱり', plus: 'atk', minus: 'spa' },
+  { id: 'okubyou', name: 'おくびょう', plus: 'spe', minus: 'atk' },
+  { id: 'hikaeme', name: 'ひかえめ', plus: 'spa', minus: 'atk' },
+  { id: 'youki', name: 'ようき', plus: 'spe', minus: 'spa' },
+  { id: 'wanpaku', name: 'わんぱく', plus: 'def', minus: 'spa' },
+  { id: 'zubutoi', name: 'ずぶとい', plus: 'def', minus: 'atk' },
+  { id: 'odayaka', name: 'おだやか', plus: 'spd', minus: 'atk' },
+  { id: 'shinchō', name: 'しんちょう', plus: 'spd', minus: 'spa' },
+  { id: 'yūkan', name: 'ゆうかん', plus: 'atk', minus: 'spe' },
+  { id: 'reisei', name: 'れいせい', plus: 'spa', minus: 'spe' },
+  { id: 'nonki', name: 'のんき', plus: 'def', minus: 'spe' },
+  { id: 'namaiki', name: 'なまいき', plus: 'spd', minus: 'spe' },
+  { id: 'samishigari', name: 'さみしがり', plus: 'atk', minus: 'def' },
+  { id: 'ottori', name: 'おっとり', plus: 'spa', minus: 'def' },
+  { id: 'yancha', name: 'やんちゃ', plus: 'atk', minus: 'spd' },
+  { id: 'ukkariya', name: 'うっかりや', plus: 'spa', minus: 'spd' },
+  { id: 'sekkachi', name: 'せっかち', plus: 'spe', minus: 'def' },
+  { id: 'mujaki', name: 'むじゃき', plus: 'spe', minus: 'spd' },
+  { id: 'ganbare', name: 'がんばりや' },
+  { id: 'sunao', name: 'すなお' },
+  { id: 'tereki', name: 'てれや' },
+  { id: 'kimagure', name: 'きまぐれ' },
+  { id: 'majime', name: 'まじめ' },
+];
