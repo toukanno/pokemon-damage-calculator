@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ポケモンダメージ計算機</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans',sans-serif;background:linear-gradient(135deg,#1a1a2e,#16213e);min-height:100vh;display:flex;justify-content:center;padding:20px;color:#e2e8f0}
+.app{max-width:520px;width:100%}
+h1{text-align:center;font-size:22px;margin-bottom:20px;background:linear-gradient(90deg,#f59e0b,#ef4444);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.card{background:rgba(255,255,255,.06);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:20px;margin-bottom:16px}
+.card h2{font-size:15px;margin-bottom:14px;color:#94a3b8;display:flex;align-items:center;gap:8px}
+.card h2::before{content:'';width:4px;height:16px;border-radius:2px;display:inline-block}
+.attack-card h2::before{background:#ef4444}
+.defend-card h2::before{background:#3b82f6}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+label{font-size:12px;color:#94a3b8;display:block;margin-bottom:4px}
+input,select{width:100%;padding:10px 12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;font-size:14px;outline:none;transition:border .2s}
+input:focus,select:focus{border-color:#6366f1}
+select option{background:#1e293b;color:#fff}
+.calc-btn{width:100%;padding:14px;background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none;border-radius:12px;color:#fff;font-size:16px;font-weight:700;cursor:pointer;transition:transform .15s,box-shadow .15s;margin-bottom:16px}
+.calc-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(99,102,241,.3)}
+.result{text-align:center;padding:24px;background:rgba(255,255,255,.06);border-radius:16px;border:1px solid rgba(255,255,255,.1)}
+.result .damage{font-size:40px;font-weight:800;background:linear-gradient(90deg,#f59e0b,#ef4444);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.result .range{font-size:14px;color:#94a3b8;margin-top:4px}
+.result .eff{margin-top:10px;font-size:14px;padding:6px 14px;border-radius:20px;display:inline-block}
+.eff-super{background:rgba(34,197,94,.15);color:#22c55e}
+.eff-weak{background:rgba(239,68,68,.15);color:#ef4444}
+.eff-normal{background:rgba(148,163,184,.15);color:#94a3b8}
+.eff-immune{background:rgba(107,114,128,.15);color:#6b7280}
+.type-chart{margin-top:16px}
+.type-chart summary{cursor:pointer;font-size:13px;color:#94a3b8;text-align:center}
+.chart-grid{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;justify-content:center}
+.type-badge{padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;color:#fff}
+</style>
+</head>
+<body>
+<div class="app">
+<h1>ポケモンダメージ計算機</h1>
+<div class="card attack-card">
+  <h2>攻撃側</h2>
+  <div class="row">
+    <div><label>レベル</label><input type="number" id="level" value="50" min="1" max="100"></div>
+    <div><label>攻撃力</label><input type="number" id="attack" value="100" min="1" max="999"></div>
+  </div>
+  <div class="row">
+    <div><label>技の威力</label><input type="number" id="power" value="80" min="1" max="999"></div>
+    <div><label>技のタイプ</label><select id="moveType"></select></div>
+  </div>
+  <div><label>タイプ一致 (STAB)</label><select id="stab"><option value="1">なし</option><option value="1.5" selected>あり (x1.5)</option></select></div>
+</div>
+<div class="card defend-card">
+  <h2>防御側</h2>
+  <div class="row">
+    <div><label>防御力</label><input type="number" id="defense" value="100" min="1" max="999"></div>
+    <div><label>タイプ</label><select id="defType"></select></div>
+  </div>
+</div>
+<button class="calc-btn" onclick="calc()">ダメージ計算</button>
+<div class="result" id="result">
+  <div class="damage">---</div>
+  <div class="range">上の値を入力して計算ボタンを押してください</div>
+</div>
+<details class="type-chart">
+  <summary>タイプ相性チャート</summary>
+  <div class="chart-grid" id="typeChart"></div>
+</details>
+</div>
+<script>
+const TYPES=['ノーマル','ほのお','みず','でんき','くさ','こおり','かくとう','どく','じめん','ひこう','エスパー','むし','いわ','ゴースト','ドラゴン','あく','はがね','フェアリー'];
+const COLORS=['#a8a878','#f08030','#6890f0','#f8d030','#78c850','#98d8d8','#c03028','#a040a0','#e0c068','#a890f0','#f85888','#a8b820','#b8a038','#705898','#7038f8','#705848','#b8b8d0','#ee99ac'];
+// Simplified effectiveness matrix: rows=attack type, cols=defend type
+// 0=immune,0.5=not very effective,1=normal,2=super effective
+const EFF=[
+[1,1,1,1,1,1,1,1,1,1,1,1,.5,0,1,1,.5,1],
+[1,.5,.5,1,2,2,1,1,1,1,1,2,.5,1,.5,1,2,1],
+[1,2,.5,1,.5,1,1,1,2,1,1,1,2,1,.5,1,1,1],
+[1,1,2,.5,.5,1,1,1,0,2,1,1,1,1,.5,1,1,1],
+[1,.5,2,1,.5,1,1,.5,2,.5,1,.5,2,1,.5,1,.5,1],
+[1,.5,.5,1,2,.5,1,1,2,2,1,1,1,1,2,1,.5,1],
+[2,1,1,1,1,2,1,.5,1,.5,.5,.5,2,0,1,2,2,.5],
+[1,1,1,1,2,1,1,.5,.5,1,1,1,.5,.5,1,1,0,2],
+[1,2,1,2,.5,1,1,2,1,0,1,.5,2,1,1,1,2,1],
+[1,1,1,.5,2,1,2,1,1,1,1,2,.5,1,1,1,.5,1],
+[1,1,1,1,1,1,2,2,1,1,.5,1,1,1,1,0,.5,1],
+[1,.5,1,1,2,1,.5,.5,1,.5,2,1,1,.5,1,2,.5,.5],
+[1,2,1,1,1,2,.5,1,.5,2,1,2,1,1,1,1,.5,1],
+[0,1,1,1,1,1,1,1,1,1,2,1,1,2,1,.5,1,1],
+[1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,.5,0],
+[1,1,1,1,1,1,.5,1,1,1,2,1,1,2,1,.5,1,.5],
+[1,.5,.5,.5,1,2,1,1,1,1,1,1,2,1,1,1,.5,2],
+[1,.5,1,1,1,1,2,.5,1,1,1,1,1,1,2,2,.5,1]
+];
+
+function populateSelects(){
+  const s1=document.getElementById('moveType'),s2=document.getElementById('defType');
+  TYPES.forEach((t,i)=>{
+    s1.innerHTML+=`<option value="${i}">${t}</option>`;
+    s2.innerHTML+=`<option value="${i}">${t}</option>`;
+  });
+  s2.selectedIndex=0;s1.selectedIndex=1;
+  const chart=document.getElementById('typeChart');
+  TYPES.forEach((t,i)=>{chart.innerHTML+=`<span class="type-badge" style="background:${COLORS[i]}">${t}</span>`;});
+}
+
+function calc(){
+  const lv=+document.getElementById('level').value;
+  const atk=+document.getElementById('attack').value;
+  const pow=+document.getElementById('power').value;
+  const def=+document.getElementById('defense').value;
+  const stab=+document.getElementById('stab').value;
+  const mt=+document.getElementById('moveType').value;
+  const dt=+document.getElementById('defType').value;
+  const eff=EFF[mt][dt];
+  const baseDmg=((2*lv/5+2)*pow*atk/def/50+2)*stab*eff;
+  const minDmg=Math.floor(baseDmg*0.85);
+  const maxDmg=Math.floor(baseDmg);
+  const res=document.getElementById('result');
+  let effClass='eff-normal',effText='等倍';
+  if(eff===0){effClass='eff-immune';effText='効果なし';}
+  else if(eff>=2){effClass='eff-super';effText='効果抜群! (x'+eff+')';}
+  else if(eff<1){effClass='eff-weak';effText='いまひとつ (x'+eff+')';}
+  res.innerHTML=`<div class="damage">${eff===0?0:minDmg} ~ ${eff===0?0:maxDmg}</div><div class="range">乱数幅 (85%~100%)</div><div class="eff ${effClass}">${effText}</div>`;
+}
+
+populateSelects();
+</script>
+</body>
+</html>
